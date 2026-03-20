@@ -45,24 +45,34 @@ function getRefreshSecret(): string {
   return getRequiredEnv("JWT_REFRESH_SECRET");
 }
 
-const ACCESS_EXPIRES_IN_STR = process.env.JWT_ACCESS_EXPIRES_IN ?? "15m";
-const REFRESH_EXPIRES_IN_STR = process.env.JWT_REFRESH_EXPIRES_IN ?? "30d";
+function getAccessExpiresInStr(): string {
+  return process.env.JWT_ACCESS_EXPIRES_IN ?? "15m";
+}
 
-const ACCESS_EXPIRES_IN = ACCESS_EXPIRES_IN_STR as unknown as SignOptions["expiresIn"];
-const REFRESH_EXPIRES_IN = REFRESH_EXPIRES_IN_STR as unknown as SignOptions["expiresIn"];
+function getRefreshExpiresInStr(): string {
+  return process.env.JWT_REFRESH_EXPIRES_IN ?? "30d";
+}
+
+function getAccessExpiresIn(): SignOptions["expiresIn"] {
+  return getAccessExpiresInStr() as unknown as SignOptions["expiresIn"];
+}
+
+function getRefreshExpiresIn(): SignOptions["expiresIn"] {
+  return getRefreshExpiresInStr() as unknown as SignOptions["expiresIn"];
+}
 
 export const accessExpiresAtFromNow = (): Date =>
-  new Date(Date.now() + parseTtlToMs(ACCESS_EXPIRES_IN_STR));
+  new Date(Date.now() + parseTtlToMs(getAccessExpiresInStr()));
 
 export const refreshExpiresAtFromNow = (): Date =>
-  new Date(Date.now() + parseTtlToMs(REFRESH_EXPIRES_IN_STR));
+  new Date(Date.now() + parseTtlToMs(getRefreshExpiresInStr()));
 
 export function signAccessToken(userId: number): string {
   return jwt.sign(
     { sub: userId.toString(), type: "access" },
     getAccessSecret(),
     {
-      expiresIn: ACCESS_EXPIRES_IN,
+      expiresIn: getAccessExpiresIn(),
     }
   );
 }
@@ -74,7 +84,7 @@ export function signRefreshToken(userId: number): { token: string; jti: string }
     { sub: userId.toString(), type: "refresh", jti },
     getRefreshSecret(),
     {
-      expiresIn: REFRESH_EXPIRES_IN,
+      expiresIn: getRefreshExpiresIn(),
     }
   );
 
