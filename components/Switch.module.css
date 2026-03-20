@@ -1,0 +1,49 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.track {
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(107, 114, 128, 0.3);
+  border: 1px solid rgba(229, 231, 235, 0.9);
+  position: relative;
+  cursor: pointer;
+}
+
+.track::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  top: 50%;
+  left: 3px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transition: left 160ms ease, background 160ms ease;
+}
+
+.input:checked + .track {
+  background: rgba(22, 163, 74, 0.25);
+  border-color: rgba(22, 163, 74, 0.35);
+}
+
+.input:checked + .track::after {
+  left: 22px;
+}
+
+.input:disabled + .track {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

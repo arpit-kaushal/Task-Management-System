@@ -1,0 +1,47 @@
+.host {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.success {
+  border-color: rgba(22, 163, 74, 0.35);
+}
+
+.error {
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+.message {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.close {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0;
+  color: var(--muted);
+}
+
