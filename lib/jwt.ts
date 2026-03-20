@@ -1,11 +1,9 @@
 import jwt, { JwtPayload, type SignOptions } from "jsonwebtoken";
 import { randomUUID } from "crypto";
 
-function requiredEnv(name: string): string {
+function getRequiredEnv(name: string): string {
   const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
-  }
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
   return value;
 }
 
@@ -39,8 +37,13 @@ export type RefreshTokenClaims = {
   jti: string;
 };
 
-const ACCESS_SECRET = requiredEnv("JWT_ACCESS_SECRET");
-const REFRESH_SECRET = requiredEnv("JWT_REFRESH_SECRET");
+function getAccessSecret(): string {
+  return getRequiredEnv("JWT_ACCESS_SECRET");
+}
+
+function getRefreshSecret(): string {
+  return getRequiredEnv("JWT_REFRESH_SECRET");
+}
 
 const ACCESS_EXPIRES_IN_STR = process.env.JWT_ACCESS_EXPIRES_IN ?? "15m";
 const REFRESH_EXPIRES_IN_STR = process.env.JWT_REFRESH_EXPIRES_IN ?? "30d";
@@ -57,7 +60,7 @@ export const refreshExpiresAtFromNow = (): Date =>
 export function signAccessToken(userId: number): string {
   return jwt.sign(
     { sub: userId.toString(), type: "access" },
-    ACCESS_SECRET,
+    getAccessSecret(),
     {
       expiresIn: ACCESS_EXPIRES_IN,
     }
@@ -69,7 +72,7 @@ export function signRefreshToken(userId: number): { token: string; jti: string }
 
   const token = jwt.sign(
     { sub: userId.toString(), type: "refresh", jti },
-    REFRESH_SECRET,
+    getRefreshSecret(),
     {
       expiresIn: REFRESH_EXPIRES_IN,
     }
@@ -86,7 +89,7 @@ function parseJwtPayload(payload: string | JwtPayload): JwtPayload {
 }
 
 export function verifyAccessToken(token: string): AccessTokenClaims {
-  const decoded = jwt.verify(token, ACCESS_SECRET) as string | JwtPayload;
+  const decoded = jwt.verify(token, getAccessSecret()) as string | JwtPayload;
   const payload = parseJwtPayload(decoded);
 
   if (payload.type !== "access") {
@@ -97,7 +100,7 @@ export function verifyAccessToken(token: string): AccessTokenClaims {
 }
 
 export function verifyRefreshToken(token: string): RefreshTokenClaims {
-  const decoded = jwt.verify(token, REFRESH_SECRET) as string | JwtPayload;
+  const decoded = jwt.verify(token, getRefreshSecret()) as string | JwtPayload;
   const payload = parseJwtPayload(decoded);
 
   if (payload.type !== "refresh") {
