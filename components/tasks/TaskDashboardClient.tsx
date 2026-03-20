@@ -73,6 +73,7 @@ export default function TaskDashboardClient() {
   const { toasts, addToast } = useToasts();
 
   const [accessToken, setAccessTokenState] = useState<string | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,6 +107,7 @@ export default function TaskDashboardClient() {
     const token = getAccessToken();
     if (token) {
       setAccessTokenState(token);
+      setAuthChecking(false);
       return;
     }
 
@@ -115,6 +117,7 @@ export default function TaskDashboardClient() {
         return;
       }
       setAccessTokenState(t);
+      setAuthChecking(false);
     });
   }, []);
 
@@ -313,6 +316,18 @@ export default function TaskDashboardClient() {
     }
   }
 
+  if (authChecking) {
+    return (
+      <div className={styles.page}>
+        <section className={styles.card}>
+          <div className={styles.authLoaderWrap}>
+            <div className={styles.loader} />
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
       <ToastHost toasts={toasts} />
@@ -397,7 +412,11 @@ export default function TaskDashboardClient() {
         <div className={styles.cardTitle}>Task List</div>
 
         {loading ? (
-          <div className={styles.muted}>Loading...</div>
+          <div className={styles.skeletonList}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className={styles.skeletonRow} />
+            ))}
+          </div>
         ) : tasks.length === 0 ? (
           <div className={styles.muted}>No tasks found.</div>
         ) : (
@@ -524,27 +543,33 @@ export default function TaskDashboardClient() {
         )}
 
         <div className={styles.pagination}>
-          <button
-            type="button"
-            className={styles.secondaryBtn}
-            disabled={page <= 1}
-            onClick={() => {
-              setPage((p) => Math.max(1, p - 1));
-            }}
-          >
-            Previous
-          </button>
+          {page > 1 ? (
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={() => {
+                setPage((p) => Math.max(1, p - 1));
+              }}
+            >
+              Previous
+            </button>
+          ) : (
+            <div />
+          )}
           <div className={styles.pageInfo}>
             Page {page} of {totalPages}
           </div>
-          <button
-            type="button"
-            className={styles.secondaryBtn}
-            disabled={page >= totalPages}
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-          >
-            Next
-          </button>
+          {page < totalPages ? (
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next
+            </button>
+          ) : (
+            <div />
+          )}
         </div>
       </section>
     </div>

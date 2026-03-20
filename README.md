@@ -4,13 +4,16 @@ Backend API implemented with:
 - Next.js (App Router) using route handlers in `app/api/*`
 - Node.js + TypeScript
 - Prisma ORM (MySQL)
-- JWT Access Token + Refresh Token (HttpOnly cookie)
+- JWT Access Token + Refresh Token
 - bcrypt password hashing
+
+## 🌐 Live Demo
+[https://task-mgmt-systm.vercel.app/](https://task-mgmt-systm.vercel.app/)
 
 ## Setup
 1. Update environment variables in `.env`:
    - `DATABASE_URL` (MySQL connection string)
-   - `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` (change the defaults)
+   - `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET`
 2. Create the database tables:
    - `npx prisma migrate dev --name init`
 3. Run the server:
