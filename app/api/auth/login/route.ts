@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
